@@ -2,43 +2,56 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <netinet/in.h>
 
-void bubble(int *arr,int n)
+struct indexArray {
+  int value;
+  int index;
+};
+struct index {
+    int indexNow;
+    int indexBefore;
+};
+void bubble(struct indexArray *arr,int n)
 {
 int i,j;
-int temp;
+struct indexArray temp;
 for(i=1;i<n;i++)
  {
   for(j=0;j<n-i;j++)
    {
-    if(*(arr+j)>*(arr+j+1))
+    if(arr[j].value>arr[j+1].value)
      {
-      temp=*(arr+j);
-      *(arr+j)=*(arr+j+1);
-      *(arr+j+1)=temp;
-      finish = 0;
+      temp=(arr[j]);
+      (arr[j])=(arr[j+1]);
+      (arr[j+1])=temp;
      }
    }
  }
 }
 
-int binarySearch(int *arr, int lenght, int key)
+struct index binarySearch(struct indexArray *arr, int lenght, int key)
 {
   int low = 0;
   int high = lenght - 1;
   int currentIndex;
+  struct index index;
 
   while(low <= high)
   {
     currentIndex = (high + low) / 2;
-    if(key == arr[currentIndex])
-        return currentIndex;
-    else if(key < arr[currentIndex])
+    if(key == arr[currentIndex].value){
+        index.indexNow = currentIndex;
+        index.indexBefore = arr[currentIndex].index;
+        return index;
+    }else if(key < arr[currentIndex].value){
       high = currentIndex - 1;
-    else
+    }else{
       low = currentIndex + 1;
+    }
   }
-  return -1;
+  index.indexNow = -1;
+  return index;
 }
 
 int main()
@@ -57,23 +70,20 @@ int main()
   stat(filename, &st);
   int size = st.st_size;
 
-  int *array = malloc(size*sizeof(int));
-  int *arrySort = malloc(size*sizeof(int));
+  struct indexArray *pArray = malloc(size*sizeof(int));
 
   int i = 0, num = 0;
   while (fscanf(f, "%d", &num) == 1)
   {
-    array[i++] = num;
+    pArray[i].value = num;
+    pArray[i].index = i;
+    i++;
   }
   fclose(f);
 
-  memcpy(arrySort, array, i*sizeof(int));
-  bubble(arrySort, i);
-  for(int j = 0; j<=i; j++){
-    printf("%d ", array[j]);
-  }
+  bubble(pArray, i);
   for(int j = 0; j<i; j++){
-    printf("%d ", arrySort[j]);
+    printf("%d\t%d\t%d\n", j, pArray[j].index, pArray[j].value);
   }
   int key;
   printf("\nPut in an integer for search(type 0 for exit): ");
@@ -81,13 +91,17 @@ int main()
 
   while(key != 0)
   {
-    int result = binarySearch(arrySort, i, key);
-    if(result == -1)
+    struct index result = binarySearch(pArray, i, key);
+    if(result.indexNow == -1)
+    {
       printf("\nCan't find the index of that number");
+    }
     else
-      printf("\nThe number you searched has index %d", result);
+    {
+      printf("\nThe number you searched has index %d and hade original index %d",
+        result.indexNow, result.indexBefore);
+    }
     printf("\nPut in an integer for search (type 0 for exit): ");
     scanf("%d", &key);
   }
-
 }
