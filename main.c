@@ -3,6 +3,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <netinet/in.h>
+#include <ctype.h>
 
 struct indexArray {
   int value;
@@ -12,6 +13,7 @@ struct index {
     int indexNow;
     int indexBefore;
 };
+
 void bubble(struct indexArray *arr,int n)
 {
 int i,j;
@@ -53,19 +55,45 @@ struct index binarySearch(struct indexArray *arr, int lenght, int key)
   index.indexNow = -1;
   return index;
 }
+void print(struct indexArray *pArray, int i)
+{
+  int key;
+  printf("\nPut in an integer for search(type 0 for exit): ");
+  scanf("%d", &key);
+  while(!(isdigit(key))){
+    printf("\nPut in an integer for search(type 0 for exit): ");
+    scanf("%d", &key);
+  }
+
+  while(key != 0)
+  {
+    struct index result = binarySearch(pArray, i, key);
+    if(result.indexNow == -1)
+    {
+      printf("\nCan't find the index of that number");
+    }
+    else
+    {
+      printf("\nThe number you searched has index %d and had original index %d",
+        result.indexNow, result.indexBefore);
+    }
+    printf("\nPut in an integer for search (type 0 for exit): ");
+    scanf("%d", &key);
+  }
+}
 
 int main()
 {
   char filename[255];
   printf("Write the name of the input file: ");
   scanf("%s", filename);
-
-
   FILE* f = fopen (filename, "r");
+
   if(f == NULL) {
     fprintf(stderr, "Unable to open file");
     exit(-1);
   }
+
   struct stat st;
   stat(filename, &st);
   int size = st.st_size;
@@ -82,26 +110,5 @@ int main()
   fclose(f);
 
   bubble(pArray, i);
-  for(int j = 0; j<i; j++){
-    printf("%d\t%d\t%d\n", j, pArray[j].index, pArray[j].value);
+  print(pArray, i);
   }
-  int key;
-  printf("\nPut in an integer for search(type 0 for exit): ");
-  scanf("%d", &key);
-
-  while(key != 0)
-  {
-    struct index result = binarySearch(pArray, i, key);
-    if(result.indexNow == -1)
-    {
-      printf("\nCan't find the index of that number");
-    }
-    else
-    {
-      printf("\nThe number you searched has index %d and hade original index %d",
-        result.indexNow, result.indexBefore);
-    }
-    printf("\nPut in an integer for search (type 0 for exit): ");
-    scanf("%d", &key);
-  }
-}
