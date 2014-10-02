@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 void bubble(int *arr,int n)
 {
@@ -15,6 +16,7 @@ for(i=1;i<n;i++)
       temp=*(arr+j);
       *(arr+j)=*(arr+j+1);
       *(arr+j+1)=temp;
+      finish = 0;
      }
    }
  }
@@ -51,9 +53,12 @@ int main()
     fprintf(stderr, "Unable to open file");
     exit(-1);
   }
+  struct stat st;
+  stat(filename, &st);
+  int size = st.st_size;
 
-  int *array = malloc(10000*sizeof(int));
-  int *arrySort = malloc(10000*sizeof(int));
+  int *array = malloc(size*sizeof(int));
+  int *arrySort = malloc(size*sizeof(int));
 
   int i = 0, num = 0;
   while (fscanf(f, "%d", &num) == 1)
@@ -64,18 +69,24 @@ int main()
 
   memcpy(arrySort, array, i*sizeof(int));
   bubble(arrySort, i);
+  for(int j = 0; j<=i; j++){
+    printf("%d ", array[j]);
+  }
+  for(int j = 0; j<i; j++){
+    printf("%d ", arrySort[j]);
+  }
   int key;
-  printf("Put in an integer for search: ");
+  printf("\nPut in an integer for search(type 0 for exit): ");
   scanf("%d", &key);
 
   while(key != 0)
   {
     int result = binarySearch(arrySort, i, key);
     if(result == -1)
-      printf("Can't find the index of that number");
+      printf("\nCan't find the index of that number");
     else
-      printf("The number you searched has index %d", result);
-    printf("Put in an integer for search (type 0 for exit): ");
+      printf("\nThe number you searched has index %d", result);
+    printf("\nPut in an integer for search (type 0 for exit): ");
     scanf("%d", &key);
   }
 
