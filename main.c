@@ -58,8 +58,11 @@ void print(struct indexArray *pArray, int i)
     int key = -1;
 
     printf("\nPut in an integer for search (type 0 for exit): ");
-    scanf("%d", &key);
-
+    if(scanf("%d", &key) != 1)
+    {
+        printf("\nYou have to type in an integer: ");
+        scanf("%d", &key);
+    }
     while(key != 0)
     {
         struct indexArray result = binarySearch(pArray, i, key);
@@ -112,11 +115,6 @@ int scan()
     int i = 0, num = 0;
     while (fscanf(f, "%d", &num) == 1)
     {
-        if (num < '0' || num > '9')
-        {
-            printf("File need to contain only integers. Reload program");
-            exit(-1);
-        }
         pArray[i].value = num;
         pArray[i].indexNow = i;
         i++;
