@@ -7,31 +7,31 @@
 //Struct which is used in the pointer array to store different values.
 struct indexArray {
   int value;
-  int indexNow;
-  int indexBefore;
-}*pArray;
+  int indexCurrent;
+  int indexOriginal;
+}*pIndexArray;
 
 //buble sort algorithm
-void bubble(struct indexArray *arr,int n)
+void bubbleSort(struct indexArray *pIndexArray,int count)
 {
   int i,j;
   struct indexArray temp;
-  for(i=1;i<n;i++)
+  for(i=1;i<count;i++)
     {
-      for(j=0;j<n-i;j++)
+      for(j=0;j<count-i;j++)
         {
-          if(arr[j].value>arr[j+1].value)
+          if(pIndexArray[j].value>pIndexArray[j+1].value)
             {
-              temp=(arr[j]);
-              (arr[j])=(arr[j+1]);
-              (arr[j+1])=temp;
+              temp=(pIndexArray[j]);
+              (pIndexArray[j])=(pIndexArray[j+1]);
+              (pIndexArray[j+1])=temp;
             }
         }
     }
 }
 
 //Binary search algorithm
-struct indexArray binarySearch(struct indexArray *pArray, int lenght, int key)
+struct indexArray binarySearch(struct indexArray *pIndexArray, int lenght, int key)
 {
     int low = 0;
     int high = lenght - 1;
@@ -41,18 +41,18 @@ struct indexArray binarySearch(struct indexArray *pArray, int lenght, int key)
     while(low <= high)
     {
         currentIndex = (high + low) / 2;
-        if(key == pArray[currentIndex].value){
-            index.indexBefore = pArray[currentIndex].indexNow;
-            index.indexNow = currentIndex;
-            index.value = pArray[currentIndex].value;
+        if(key == pIndexArray[currentIndex].value){
+            index.indexOriginal = pIndexArray[currentIndex].indexCurrent;
+            index.indexCurrent = currentIndex;
+            index.value = pIndexArray[currentIndex].value;
             return index;
-        }else if(key < pArray[currentIndex].value){
+        }else if(key < pIndexArray[currentIndex].value){
             high = currentIndex - 1;
         }else{
             low = currentIndex + 1;
         }
     }
-    index.indexNow = -1;
+    index.indexCurrent = -1;
     return index;
 }
 //Handle input of number for search.
@@ -70,7 +70,7 @@ int getNumberInput(int key, int success)
   return 0;
 }
 //print the result of the binary search.
-void print(struct indexArray *pArray, int i)
+void printResultFromSearch(struct indexArray *pIndexArray, int count)
 {
     int key = -1, success = 0;
 
@@ -79,27 +79,27 @@ void print(struct indexArray *pArray, int i)
     while(key != 0)
     {
         //starting binary search after input from the getNumberInput method.
-        struct indexArray result = binarySearch(pArray, i, key);
-        if(result.indexNow == -1)
+        struct indexArray result = binarySearch(pIndexArray, count, key);
+        if(result.indexCurrent == -1)
         {
             printf("\nCan't find the index of that number\n");
         }
         else
         {
             printf("\n%d has index %d and had original index %d.",
-                    result.value, result.indexNow, result.indexBefore);
+                    result.value, result.indexCurrent, result.indexOriginal);
 
             //A little "hack" to find matching numbers.
             //I know it's not "best practise". Sorrryyyyyyyy :)
             int j;
             for(j = -3; j < 7; j++)
             {
-                if(result.value == pArray[result.indexNow + j].value
-                    && pArray[result.indexNow + j].indexNow != result.indexBefore)
+                if(result.value == pIndexArray[result.indexCurrent + j].value
+                    && pIndexArray[result.indexCurrent + j].indexCurrent != result.indexOriginal)
                 {
 
                     printf("\nSame number also exist at index %d and had original index %d.",
-                          result.indexNow + j, pArray[result.indexNow + j].indexNow);
+                          result.indexCurrent + j, pIndexArray[result.indexCurrent + j].indexCurrent);
 
                 }
 
@@ -109,7 +109,7 @@ void print(struct indexArray *pArray, int i)
     }
 }
 //Scan the choosen file
-int scan()
+int scanIntToArray()
 {
     char filename[255];
     memset(filename, 0, sizeof(filename));
@@ -134,7 +134,7 @@ int scan()
 
     //set the size of the struct array and start reading input.
     int size = st.st_size;
-    pArray = malloc(size*sizeof(int));
+    pIndexArray = malloc(size*sizeof(int));
     FILE* f = fopen (filename, "r");
     if(f == NULL)
     {
@@ -142,28 +142,28 @@ int scan()
         exit(-1);
     }
 
-    int i = 0, num = 0;
-    while (fscanf(f, "%d", &num) == 1)
+    int count = 0, numberFromFile = 0;
+    while (fscanf(f, "%d", &numberFromFile) == 1)
     {
-        pArray[i].value = num;
-        pArray[i].indexNow = i;
-        i++;
-        if(i > 200000){
+        pIndexArray[count].value = numberFromFile;
+        pIndexArray[count].indexCurrent = count;
+        count++;
+        if(count > 200000){
             printf("file is too big, reload program \n");
             exit(-1);
         }
     }
-    if(i < 2){
+    if(count < 2){
         printf("file is too short, reload program \n");
         exit(-1);
     }
-    return i;
+    return count;
     fclose(f);
 }
 //main method
 int main()
 {
-    int i = scan();
-    bubble(pArray, i);
-    print(pArray, i);
+    int count = scanIntToArray();
+    bubbleSort(pIndexArray, count);
+    printResultFromSearch(pIndexArray, count);
 }
