@@ -91,7 +91,8 @@ void print(struct indexArray *pArray, int i)
 
             //A little "hack" to find matching numbers.
             //I know it's not "best practise". Sorrryyyyyyyy :)
-            for(int j = -3; j < 7; j++)
+            int j;
+            for(j = -3; j < 7; j++)
             {
                 if(result.value == pArray[result.indexNow + j].value
                     && pArray[result.indexNow + j].indexNow != result.indexBefore)
