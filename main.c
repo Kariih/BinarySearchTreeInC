@@ -92,18 +92,30 @@ void printResultFromSearch(struct indexArray *pIndexArray, int count)
             //A little "hack" to find matching numbers.
             //I know it's not "best practise". Sorrryyyyyyyy :)
             int j;
-            for(j = -3; j < 7; j++)
+            if(result.indexCurrent < 1)
             {
-                if(result.value == pIndexArray[result.indexCurrent + j].value
-                    && pIndexArray[result.indexCurrent + j].indexCurrent != result.indexOriginal)
+                for(j = 0; j < 5; j++)
                 {
-
-                    printf("\nSame number also exist at index %d and had original index %d.",
-                          result.indexCurrent + j, pIndexArray[result.indexCurrent + j].indexCurrent);
-
-                }
-
-            }
+                    if(result.value == pIndexArray[result.indexCurrent + j].value
+                        && pIndexArray[result.indexCurrent + j].indexCurrent != result.indexOriginal)
+                    {
+                        printf("\nSame number also exist at index %d and had original index %d.",
+                              result.indexCurrent + j, pIndexArray[result.indexCurrent + j].indexCurrent);
+                    }
+                  }
+              }
+              else
+              {
+                for(j = -2; j < 5; j++)
+                {
+                    if(result.value == pIndexArray[result.indexCurrent + j].value
+                        && pIndexArray[result.indexCurrent + j].indexCurrent != result.indexOriginal)
+                    {
+                        printf("\nSame number also exist at index %d and had original index %d.",
+                              result.indexCurrent + j, pIndexArray[result.indexCurrent + j].indexCurrent);
+                    }
+                  }
+              }
         }
     key = getNumberInput(key, success);
     }
@@ -163,7 +175,7 @@ int scanIntToArray()
 //main method
 int main()
 {
-    int count = scanIntToArray();
-    bubbleSort(pIndexArray, count);
-    printResultFromSearch(pIndexArray, count);
+    int n = scanIntToArray();
+    bubbleSort(pIndexArray, n);
+    printResultFromSearch(pIndexArray, n);
 }
