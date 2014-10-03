@@ -142,7 +142,7 @@ int scanIntToArray()
         exit(-1);
     }
 
-    int count = 0, numberFromFile = 0;
+    int count = 1, numberFromFile = 0;
     while (fscanf(f, "%d", &numberFromFile) == 1)
     {
         pIndexArray[count].value = numberFromFile;
