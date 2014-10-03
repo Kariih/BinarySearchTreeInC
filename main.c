@@ -29,7 +29,7 @@ void bubble(struct indexArray *arr,int n)
         }
     }
 }
-struct indexArray binarySearch(struct indexArray *arr, int lenght, int key)
+struct indexArray binarySearch(struct indexArray *pArray, int lenght, int key)
 {
     int low = 0;
     int high = lenght - 1;
@@ -39,12 +39,12 @@ struct indexArray binarySearch(struct indexArray *arr, int lenght, int key)
     while(low <= high)
     {
         currentIndex = (high + low) / 2;
-        if(key == arr[currentIndex].value){
-
-            index.indexBefore = arr[currentIndex].indexNow;
+        if(key == pArray[currentIndex].value){
+            index.indexBefore = pArray[currentIndex].indexNow;
             index.indexNow = currentIndex;
+            index.value = pArray[currentIndex].value;
             return index;
-        }else if(key < arr[currentIndex].value){
+        }else if(key < pArray[currentIndex].value){
             high = currentIndex - 1;
         }else{
             low = currentIndex + 1;
@@ -56,16 +56,12 @@ struct indexArray binarySearch(struct indexArray *arr, int lenght, int key)
 void print(struct indexArray *pArray, int i)
 {
     int key = -1;
+
     printf("\nPut in an integer for search (type 0 for exit): ");
     scanf("%d", &key);
 
     while(key != 0)
     {
-          /*while (!isdigit(key=getchar()))
-            {
-                printf("\nOnly integers are accepted, try again: ");
-                scanf("%d", &key);
-            }*/
         struct indexArray result = binarySearch(pArray, i, key);
             if(result.indexNow == -1)
             {
@@ -73,8 +69,19 @@ void print(struct indexArray *pArray, int i)
             }
             else
             {
-                printf("\nThe number you searched has index %d and had original index %d",
-                result.indexNow, result.indexBefore);
+                    printf("\n%d has index %d and had original index %d.",
+                    result.value, result.indexNow, result.indexBefore);
+                  for(int j = -3; j < 7; j++)
+                  {
+                      if(result.value == pArray[result.indexNow + j].value && pArray[result.indexNow + j].indexNow != result.indexBefore)
+                      {
+
+                              printf("\n%d also exist at %d and had original index %d.",
+                              pArray[result.indexNow + j].value, result.indexNow + j, pArray[result.indexNow + j].indexNow);
+
+                      }
+
+                  }
             }
             printf("\nPut in an integer for search (type 0 for exit): ");
             scanf("%d", &key);
@@ -105,6 +112,11 @@ int scan()
     int i = 0, num = 0;
     while (fscanf(f, "%d", &num) == 1)
     {
+        if (num < '0' || num > '9')
+        {
+            printf("File need to contain only integers. Reload program");
+            exit(-1);
+        }
         pArray[i].value = num;
         pArray[i].indexNow = i;
         i++;
